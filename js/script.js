@@ -32,25 +32,104 @@ function animate() {
 animate();
 
 const form = document.getElementById('waitlist-form');
-const emailInput = document.getElementById('email');
+const phoneInput = document.getElementById('phone');
 const successMessage = document.getElementById('success-message');
+
+function formatPhoneNumber(value) {
+    const cleaned = value.replace(/\D/g, '');
+    
+    if (cleaned.length === 0) return '';
+    if (cleaned.length === 1) return `+${cleaned}`;
+    
+    // US/Canada (+1)
+    if (cleaned.startsWith('1') && cleaned.length <= 11) {
+        if (cleaned.length <= 4) return `+${cleaned.slice(0, 1)} (${cleaned.slice(1)}`;
+        if (cleaned.length <= 7) return `+${cleaned.slice(0, 1)} (${cleaned.slice(1, 4)}) ${cleaned.slice(4)}`;
+        return `+${cleaned.slice(0, 1)} (${cleaned.slice(1, 4)}) ${cleaned.slice(4, 7)}-${cleaned.slice(7, 11)}`;
+    }
+    
+    // UK (+44)
+    if (cleaned.startsWith('44')) {
+        if (cleaned.length <= 2) return `+${cleaned}`;
+        if (cleaned.length <= 6) return `+${cleaned.slice(0, 2)} ${cleaned.slice(2)}`;
+        if (cleaned.length <= 10) return `+${cleaned.slice(0, 2)} ${cleaned.slice(2, 6)} ${cleaned.slice(6)}`;
+        return `+${cleaned.slice(0, 2)} ${cleaned.slice(2, 6)} ${cleaned.slice(6, 10)}`;
+    }
+    
+    // Germany (+49)
+    if (cleaned.startsWith('49')) {
+        if (cleaned.length <= 2) return `+${cleaned}`;
+        if (cleaned.length <= 5) return `+${cleaned.slice(0, 2)} ${cleaned.slice(2)}`;
+        if (cleaned.length <= 9) return `+${cleaned.slice(0, 2)} ${cleaned.slice(2, 5)} ${cleaned.slice(5)}`;
+        return `+${cleaned.slice(0, 2)} ${cleaned.slice(2, 5)} ${cleaned.slice(5, 9)} ${cleaned.slice(9, 13)}`;
+    }
+    
+    // France (+33)
+    if (cleaned.startsWith('33')) {
+        if (cleaned.length <= 2) return `+${cleaned}`;
+        if (cleaned.length <= 3) return `+${cleaned.slice(0, 2)} ${cleaned.slice(2)}`;
+        return `+${cleaned.slice(0, 2)} ${cleaned.slice(2, 3)} ${cleaned.slice(3, 5)} ${cleaned.slice(5, 7)} ${cleaned.slice(7, 9)} ${cleaned.slice(9, 11)}`;
+    }
+    
+    // Australia (+61)
+    if (cleaned.startsWith('61')) {
+        if (cleaned.length <= 2) return `+${cleaned}`;
+        if (cleaned.length <= 3) return `+${cleaned.slice(0, 2)} ${cleaned.slice(2)}`;
+        if (cleaned.length <= 7) return `+${cleaned.slice(0, 2)} ${cleaned.slice(2, 3)} ${cleaned.slice(3)}`;
+        return `+${cleaned.slice(0, 2)} ${cleaned.slice(2, 3)} ${cleaned.slice(3, 7)} ${cleaned.slice(7, 11)}`;
+    }
+    
+    // Spain (+34), Italy (+39), Netherlands (+31), Belgium (+32)
+    if (cleaned.startsWith('34') || cleaned.startsWith('39') || cleaned.startsWith('31') || cleaned.startsWith('32')) {
+        if (cleaned.length <= 2) return `+${cleaned}`;
+        if (cleaned.length <= 5) return `+${cleaned.slice(0, 2)} ${cleaned.slice(2)}`;
+        if (cleaned.length <= 8) return `+${cleaned.slice(0, 2)} ${cleaned.slice(2, 5)} ${cleaned.slice(5)}`;
+        return `+${cleaned.slice(0, 2)} ${cleaned.slice(2, 5)} ${cleaned.slice(5, 8)} ${cleaned.slice(8, 11)}`;
+    }
+    
+    // Mexico (+52), Brazil (+55)
+    if (cleaned.startsWith('52') || cleaned.startsWith('55')) {
+        if (cleaned.length <= 2) return `+${cleaned}`;
+        if (cleaned.length <= 4) return `+${cleaned.slice(0, 2)} ${cleaned.slice(2)}`;
+        if (cleaned.length <= 8) return `+${cleaned.slice(0, 2)} ${cleaned.slice(2, 4)} ${cleaned.slice(4)}`;
+        return `+${cleaned.slice(0, 2)} ${cleaned.slice(2, 4)} ${cleaned.slice(4, 8)} ${cleaned.slice(8, 12)}`;
+    }
+    
+    // Generic international format for others (1-3 digit country code)
+    if (cleaned.length <= 3) return `+${cleaned}`;
+    if (cleaned.length <= 6) return `+${cleaned.slice(0, 2)} ${cleaned.slice(2)}`;
+    if (cleaned.length <= 10) return `+${cleaned.slice(0, 2)} ${cleaned.slice(2, 5)} ${cleaned.slice(5)}`;
+    return `+${cleaned.slice(0, 2)} ${cleaned.slice(2, 5)} ${cleaned.slice(5, 9)} ${cleaned.slice(9, 14)}`;
+}
+
+phoneInput.addEventListener('input', (e) => {
+    const cursorPosition = e.target.selectionStart;
+    const oldLength = e.target.value.length;
+    const formatted = formatPhoneNumber(e.target.value);
+    
+    e.target.value = formatted;
+    
+    const newLength = formatted.length;
+    const diff = newLength - oldLength;
+    e.target.setSelectionRange(cursorPosition + diff, cursorPosition + diff);
+});
 
 form.addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    const email = emailInput.value.trim();
+    const phone = phoneInput.value.trim();
     
-    if (!email) return;
+    if (!phone) return;
     
     try {
-        await submitEmail(email);
+        await submitPhone(phone);
         
         form.style.display = 'none';
         successMessage.classList.add('show');
         
-        emailInput.value = '';
+        phoneInput.value = '';
     } catch (error) {
-        console.error('Error submitting email:', error);
+        console.error('Error submitting phone:', error);
         alert('Something went wrong. Please try again.');
     }
 });
@@ -58,7 +137,7 @@ form.addEventListener('submit', async (e) => {
 const SUPABASE_URL = 'https://zuyyvnfjpimnkfgbwlqa.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1eXl2bmZqcGltbmtmZ2J3bHFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0NTM1OTgsImV4cCI6MjA3NTAyOTU5OH0.F4gx_e8hqfYhqMOd8zNgktLL-aNVz-qdBmrFSBRjp3s';
 
-async function submitEmail(email) {
+async function submitPhone(phone) {
     const response = await fetch(`${SUPABASE_URL}/rest/v1/waitlist`, {
         method: 'POST',
         headers: {
@@ -67,10 +146,10 @@ async function submitEmail(email) {
             'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
             'Prefer': 'return=minimal'
         },
-        body: JSON.stringify({ email })
+        body: JSON.stringify({ phone })
     });
     
     if (!response.ok) {
-        throw new Error('Failed to submit email');
+        throw new Error('Failed to submit phone');
     }
 }
