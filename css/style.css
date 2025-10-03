@@ -15,7 +15,8 @@ body {
     min-height: 100vh;
     background: #0a0a0a;
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     position: relative;
     color: #e6e6e6;
 }
@@ -258,13 +259,88 @@ body {
     }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
+    .container {
+        padding: 16px;
+        gap: 32px;
+    }
+
+    .logo {
+        width: 100px;
+        height: 100px;
+    }
+
+    .band-name {
+        font-size: clamp(3rem, 20vw, 8rem);
+    }
+
     .waitlist-form {
         flex-direction: column;
+        gap: 10px;
+        max-width: 100%;
     }
     
     .waitlist-form input,
     .waitlist-form button {
         width: 100%;
+        min-width: unset;
+    }
+
+    .waitlist-form input {
+        text-align: center;
+    }
+
+    .social-links {
+        margin-top: 12px;
+        gap: 24px;
+    }
+
+    .social-icon {
+        width: 28px;
+        height: 28px;
+    }
+
+    .success-message {
+        font-size: 13px;
+        padding: 10px 0;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        gap: 24px;
+        padding: 12px;
+    }
+
+    .logo {
+        width: 80px;
+        height: 80px;
+    }
+
+    .band-name {
+        font-size: clamp(2.5rem, 22vw, 6rem);
+    }
+
+    .waitlist-form input,
+    .waitlist-form button {
+        font-size: 15px;
+        padding: 12px 16px;
+    }
+
+    .social-icon {
+        width: 26px;
+        height: 26px;
+    }
+}
+
+@media (min-width: 1920px) {
+    .container {
+        gap: 50px;
+    }
+
+    .logo {
+        width: 140px;
+        height: 140px;
     }
 }
