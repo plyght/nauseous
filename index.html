@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAUSEOUS</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="grain"></canvas>
+    <div class="streaks"></div>
+    
+    <div class="container">
+        <picture>
+            <source srcset="logo.webp" type="image/webp">
+            <img src="logo.png" alt="Nauseous Logo" class="logo" id="logo" width="120" height="120">
+        </picture>
+        
+        <h1 class="band-name">NAUSEOUS</h1>
+        
+        <form id="waitlist-form" class="waitlist-form">
+            <input 
+                type="email" 
+                id="email" 
+                placeholder="your@email.com" 
+                required 
+                autocomplete="email"
+            >
+            <button type="submit">JOIN</button>
+        </form>
+        
+        <div id="success-message" class="success-message">
+            Thanks for being an early believer. We'll be in touch.
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
