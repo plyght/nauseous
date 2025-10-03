@@ -293,11 +293,19 @@ body {
     .social-links {
         margin-top: 12px;
         gap: 24px;
+        width: 100%;
+        padding: 0 20px;
     }
 
     .social-icon {
         width: 28px;
         height: 28px;
+    }
+
+    .social-links a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .success-message {
