@@ -2,12 +2,19 @@ const canvas = document.getElementById('grain');
 const ctx = canvas.getContext('2d');
 
 function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = Math.ceil(rect.width * dpr);
+    canvas.height = Math.ceil(rect.height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
+if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', resizeCanvas);
+    window.visualViewport.addEventListener('scroll', resizeCanvas);
+}
 
 function drawGrain() {
     const imageData = ctx.createImageData(canvas.width, canvas.height);
