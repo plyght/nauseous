@@ -36,10 +36,15 @@ const phoneInput = document.getElementById('phone');
 const successMessage = document.getElementById('success-message');
 
 function formatPhoneNumber(value) {
-    const cleaned = value.replace(/\D/g, '');
+    let cleaned = value.replace(/\D/g, '');
     
     if (cleaned.length === 0) return '';
     if (cleaned.length === 1) return `+${cleaned}`;
+    
+    // Auto-detect US number (10 digits starting with 2-9) and prepend 1
+    if (cleaned.length === 10 && /^[2-9]/.test(cleaned)) {
+        cleaned = '1' + cleaned;
+    }
     
     // US/Canada (+1)
     if (cleaned.startsWith('1') && cleaned.length <= 11) {
